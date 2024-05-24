@@ -8,8 +8,6 @@ def lambda_handler(event, context):
         for alert in filtered_alerts:
             ssm_doc = alert['labels']['ssmdoc']
             print(ssm_doc)
-        
-        print(get_instance_id(['ip-172-31-0-118.test.com']))
 
 def filter_alerts(alerts, labelname):
     filtered_alerts = list()
