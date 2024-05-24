@@ -1,0 +1,22 @@
+{
+    "Records": [
+        {
+            "EventSource": "aws:sns",
+            "EventSubscriptionArn": "arn:aws:sns:<region>:<accountid>:<sns-topic-name>:<random-string>",
+            "EventVersion": "1.0",
+            "Sns": {
+                "Message": "{\"receiver\": \"prometheus/sns-receiver/amazon-sns\",\"status\": \"firing\",\"alerts\": [{\"status\": \"firing\",\"labels\": {\"alertname\": \"KubeNodeNotReady\", \"condition\": \"Ready\", \"container\": \"kube-state-metrics\", \"endpoint\": \"http\", \"instance\": \"192.168.35.29:8080\", \"job\": \"kube-state-metrics\", \"namespace\": \"prometheus\", \"node\": \"ip-192-168-55-254.ec2.internal\", \"pod\": \"prometheus-kube-state-metrics-547454f49d-wp4bl\", \"prometheus\": \"prometheus/prometheus-kube-prometheus-prometheus\", \"service\": \"prometheus-kube-state-metrics\", \"severity\": \"warning\", \"status\": \"true\"},\"annotations\": {\"description\": \"ip-192-168-55-254.ec2.internal has been unready for more than 15 minutes.\", \"runbook_url\": \"https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubenodenotready\", \"summary\": \"Node is not ready.\"},\"startsAt\": \"2024-05-23 17:54:27.701 +0000 UTC\",\"endsAt\": \"0001-01-01 00:00:00 +0000 UTC\",\"generatorURL\": \"<random-string>\",\"fingerprint\": \"redacted\"}],\"groupLabels\": {\"job\": \"kube-state-metrics\"},\"commonLabels\": {\"alertname\": \"KubeNodeNotReady\", \"condition\": \"Ready\", \"container\": \"kube-state-metrics\", \"endpoint\": \"http\", \"instance\": \"192.168.35.29:8080\", \"job\": \"kube-state-metrics\", \"namespace\": \"prometheus\", \"node\": \"ip-192-168-55-254.ec2.internal\", \"pod\": \"prometheus-kube-state-metrics-547454f49d-wp4bl\", \"prometheus\": \"prometheus/prometheus-kube-prometheus-prometheus\", \"service\": \"prometheus-kube-state-metrics\", \"severity\": \"warning\", \"status\": \"true\"},\"commonAnnotations\": {\"description\": \"ip-192-168-55-254.ec2.internal has been unready for more than 15 minutes.\", \"runbook_url\": \"https://runbooks.prometheus-operator.dev/runbooks/kubernetes/kubenodenotready\", \"summary\": \"Node is not ready.\"}}",
+                "MessageAttributes": {},
+                "MessageId": "<random-string>",
+                "Signature": "redacted",
+                "SignatureVersion": "1",
+                "SigningCertUrl": "redacted",
+                "Subject": "alertmanager",
+                "Timestamp": "2024-05-23T18:21:30.411Z",
+                "TopicArn": "arn:aws:sns:<region>:<accountid>:<sns-topic-name>",
+                "Type": "Notification",
+                "UnsubscribeUrl": "redacted"
+            }
+        }
+    ]
+}

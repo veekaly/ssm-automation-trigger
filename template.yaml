@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  ssm-automation-trigger
+
+  This application triggers on alerts from Amazon SNS and executes corresponding SSM Automation Workflows.
+
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+
+Resources:
+  SSMTriggerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: python3.12
+      Handler: app.lambda_handler
+      CodeUri: src/
+      Architectures:
+        - x86_64
+      Events:
+        SNSSubscription:
+          Type: SNS
+          Properties:
+            Topic: 
+              Ref: SNSTopic
+  SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: alertmanager-notifications
+      FifoTopic: false
+
+Outputs:
+  SSMTriggerFunction:
+    Description: "Trigger Lambda Function ARN"
+    Value: !GetAtt SSMTriggerFunction.Arn
+  SSMTriggerFunctionIAMRole:
+    Description: "Implicit IAM Role created for Trigger function"
+    Value: !GetAtt SSMTriggerFunctionRole.Arn
+  SNSTopicArn:
+    Description: "SNS Topic ARN"
+    Value: !GetAtt SNSTopic.TopicArn
