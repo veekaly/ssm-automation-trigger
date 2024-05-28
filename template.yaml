@@ -19,6 +19,15 @@ Resources:
       CodeUri: src/
       Architectures:
         - x86_64
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+          - Sid: SSMStartExecutionPolicy
+            Effect: Allow
+            Action:
+            - ssm:StartAutomationExecution
+            Resource: '*'
+        
       Events:
         SNSSubscription:
           Type: SNS

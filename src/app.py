@@ -1,13 +1,19 @@
-import json, boto3
+import json, boto3, botocore
+import logging
+
+logger = logging.getLogger()
+logger.setLevel("INFO")
 
 def lambda_handler(event, context):
-    for record in event['Records']:
-        message = json.loads(record['Sns']['Message'])
-        alerts = message['alerts']
-        filtered_alerts = filter_alerts(alerts, "KubeNodeNotReady")
-        for alert in filtered_alerts:
-            ssm_doc = alert['labels']['ssmdoc']
-            print(ssm_doc)
+    try:
+        for record in event['Records']:
+            message = json.loads(record['Sns']['Message'])
+            alerts = message['alerts']
+            filtered_alerts = filter_alerts(alerts, "KubeNodeNotReady")
+            logger.info(filtered_alerts)
+    except Exception as error:
+        logger.error(error)
+
 
 def filter_alerts(alerts, labelname):
     filtered_alerts = list()
@@ -31,7 +37,7 @@ def get_instance_id(node_list):
         for reservation in response['Reservations']:
             for instance in reservation['Instances']:
                 instance_ids.append(instance['InstanceId'])
-    except Exception as error:
-        print(error)
+    except botocore.exceptions.ClientError as error:
+        logger.error(error)
     else:
         return instance_ids
