@@ -1,4 +1,11 @@
-# ssm-automation-trigger
+# SSM Automation Trigger [Under Construction]
+
+SSM Automation trigger receives alerts from EKS cluster(s) and executes the appropriate SSM automation to analyze/remediate issues.
+
+## Architecture
+![architecture](./files/architecture.png)
+
+## Setup Instructions
 
 1. Create an EKS Cluster
 ```
@@ -54,18 +61,18 @@ helm repo update
 helm upgrade --install prometheus prometheus-community/kube-prometheus-stack -n prometheus --values ./prometheus/kube-prometheus-stack-values.yaml
 ```
 
-5. Deploy AWS SAM template to create the Lambda function, SNS Topic, and related components
+4. Deploy AWS SAM template to create the Lambda function, SNS Topic, and related components
 ```
 sam build --use-container
 sam deploy --guided
 ```
 
-6. Test the lambda code locally
+5. Test the lambda code locally
 ```
 sam local invoke --event events/sns.json
 ```
 
-7. Configure alertmanager to send alert notifications to Amazon SNS
+6. Configure alertmanager to send alert notifications to Amazon SNS
 ```
 export SNS_TOPIC_ARN=<topic-arn-from-sam-deploy-output>
 ```
