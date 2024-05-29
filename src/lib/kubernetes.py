@@ -14,7 +14,6 @@ class KubeAPI:
 
     def _get_kubeconfig(self, cluster_name, region):
         try:
-            cluster_name = 'ssm-automation-trigger'
             eks = boto3.client('eks', region_name=region)
             cluster = eks.describe_cluster(name=cluster_name)
             token = get_token(cluster_name)['status']['token']
