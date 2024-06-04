@@ -1,3 +1,2 @@
 boto3
 kubernetes
-eks-token

@@ -67,12 +67,24 @@ sam build --use-container
 sam deploy --guided
 ```
 
-5. Test the lambda code locally
+5. Provide EKS read-only access to the Lambda IAM Role
+```
+aws eks create-access-entry --cluster-name ${CLUSTER_NAME} \
+    --principal-arn <IAM Role ARN of SSMTriggerFunctionIAMRole> \
+    --username ssm-automation-trigger
+
+aws eks associate-access-policy --cluster-name ${CLUSTER_NAME} \
+    --principal-arn <IAM Role ARN of SSMTriggerFunctionIAMRole> \
+    --access-scope type=cluster \
+    --policy-arn arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy
+```
+
+6. Test the lambda code locally
 ```
 sam local invoke --event events/sns.json
 ```
 
-6. Configure alertmanager to send alert notifications to Amazon SNS
+7. Configure alertmanager to send alert notifications to Amazon SNS
 ```
 export SNS_TOPIC_ARN=<topic-arn-from-sam-deploy-output>
 ```
@@ -82,17 +94,17 @@ cat <<EOF > prometheus/alertmanagerconfig.yaml
 apiVersion: monitoring.coreos.com/v1alpha1
 kind: AlertmanagerConfig
 metadata:
-  name: sns-receiver
+  name: ssm-automation-trigger
   namespace: prometheus
   labels:
-    alertmanagerConfig: sns-receiver
+    alertmanagerConfig: ssm-automation-trigger
 spec:
   route:
-    groupBy: ['job']
+    groupBy: ['alertname', 'cluster']
     groupWait: 30s
     groupInterval: 5m
-    repeatInterval: 5m
-    receiver: 'amazon-sns'
+    repeatInterval: 12h
+    receiver: 'default'
     routes:
     - receiver: 'amazon-sns'
       matchers:
@@ -100,6 +112,7 @@ spec:
         value: "KubeNodeNotReady"
         matchType: "="
   receivers:
+  - name: 'default'
   - name: 'amazon-sns'
     snsConfigs:
     - sigv4:

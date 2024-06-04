@@ -1,5 +1,8 @@
 prometheus:
   enabled: true
+  prometheusSpec:
+    externalLabels:
+      clustername: "ssm-automation-trigger"
 alertmanager:
   enabled: true
   serviceAccount:

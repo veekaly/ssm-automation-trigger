@@ -9,9 +9,7 @@ def lambda_handler(event, context):
     try:
         for record in event['Records']:
             message = json.loads(record['Sns']['Message'])
-            alerts = message['alerts']
-            filtered_alerts = filter_alerts(alerts, "KubeNodeNotReady")
-            logger.info(filtered_alerts)
+            logger.info(message)
 
     except Exception as error:
         logger.error(error)
