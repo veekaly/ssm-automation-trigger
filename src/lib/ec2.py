@@ -3,9 +3,10 @@ import boto3, botocore, logging
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
-def get_instance_id(node_list):
+ec2 = boto3.client("ec2")
+
+def get_instances(node_list):
     try:
-        ec2 = boto3.client("ec2")
         response = ec2.describe_instances(
             Filters=[
                 {
@@ -14,11 +15,12 @@ def get_instance_id(node_list):
                 }
             ]
         )
-        instance_ids = list()
+        instances = list()
         for reservation in response['Reservations']:
             for instance in reservation['Instances']:
-                instance_ids.append(instance['InstanceId'])
+                instances.append(instance['InstanceId'])
     except botocore.exceptions.ClientError as error:
         logger.error(error)
+        raise error
     else:
-        return instance_ids
+        return instances

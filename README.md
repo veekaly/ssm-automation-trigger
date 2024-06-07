@@ -7,7 +7,17 @@ SSM Automation trigger receives alerts from EKS cluster(s) and executes the appr
 
 ## Setup Instructions
 
-1. Create an EKS Cluster
+1. Deploy AWS SAM template to create the S3 Bucket, Lambda function, SNS Topic, and related components
+```
+sam build --use-container
+sam deploy --guided
+```
+```
+# Set the SNS Topic created in the above step as an environment variable
+export SNS_TOPIC_ARN=<topic-arn-from-sam-deploy-output>
+```
+
+2. Create an EKS Cluster
 ```
 export CLUSTER_NAME=ssm-automation-trigger
 export REGION=us-east-1
@@ -15,7 +25,7 @@ export AWS_ACCOUNT_ID=1234567890
 eksctl create cluster --name ${CLUSTER_NAME} --region ${REGION}
 ```
 
-2. Create an IRSA role for the alertmanager pod to perform AWS actions
+3. Create an IRSA role for the alertmanager pod to perform AWS actions
 ```
 cat <<EOF > alertmanager-sns-policy.json
 {
@@ -54,74 +64,36 @@ eksctl create iamserviceaccount \
     --approve
 ```
 
-3. Deploy the kube-prometheus-stack helm chart
+4. Deploy the kube-prometheus-stack helm chart
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
+envsubst < prometheus/kube-prometheus-stack-values.yaml.tmp > prometheus/kube-prometheus-stack-values.yaml
 helm upgrade --install prometheus prometheus-community/kube-prometheus-stack -n prometheus --values ./prometheus/kube-prometheus-stack-values.yaml
 ```
 
-4. Deploy AWS SAM template to create the Lambda function, SNS Topic, and related components
-```
-sam build --use-container
-sam deploy --guided
-```
-
 5. Provide EKS read-only access to the Lambda IAM Role
+
+```
+export SSMTriggerFunctionIAMRole=<iam-role-arn-of-SSMTriggerFunctionIAMRole-from-sam-deploy-output>
+```
 ```
 aws eks create-access-entry --cluster-name ${CLUSTER_NAME} \
-    --principal-arn <IAM Role ARN of SSMTriggerFunctionIAMRole> \
+    --principal-arn ${SSMTriggerFunctionIAMRole} \
     --username ssm-automation-trigger
 
 aws eks associate-access-policy --cluster-name ${CLUSTER_NAME} \
-    --principal-arn <IAM Role ARN of SSMTriggerFunctionIAMRole> \
+    --principal-arn ${SSMTriggerFunctionIAMRole} \
     --access-scope type=cluster \
     --policy-arn arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy
 ```
 
 6. Test the lambda code locally
 ```
-sam local invoke --event events/sns.json
-```
-
-7. Configure alertmanager to send alert notifications to Amazon SNS
-```
-export SNS_TOPIC_ARN=<topic-arn-from-sam-deploy-output>
+# For testing individual node not-ready workflow
+sam local invoke --event events/kube-not-ready.json
 ```
 ```
-cat <<EOF > prometheus/alertmanagerconfig.yaml
----
-apiVersion: monitoring.coreos.com/v1alpha1
-kind: AlertmanagerConfig
-metadata:
-  name: ssm-automation-trigger
-  namespace: prometheus
-  labels:
-    alertmanagerConfig: ssm-automation-trigger
-spec:
-  route:
-    groupBy: ['alertname', 'cluster']
-    groupWait: 30s
-    groupInterval: 5m
-    repeatInterval: 12h
-    receiver: 'default'
-    routes:
-    - receiver: 'amazon-sns'
-      matchers:
-      - name: "alertname"
-        value: "KubeNodeNotReady"
-        matchType: "="
-  receivers:
-  - name: 'default'
-  - name: 'amazon-sns'
-    snsConfigs:
-    - sigv4:
-        region: ${REGION}
-      topicARN: ${SNS_TOPIC_ARN}
-      subject: alertmanager
-EOF
+# For testing 5 or more nodes in not-ready workflow
+sam local invoke --event events/kube-not-ready-gt-5.json
 ```
-```
-kubectl apply -f prometheus/alertmanagerconfig.yaml
-```
-

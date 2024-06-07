@@ -1,0 +1,22 @@
+{
+    "Records": [
+        {
+            "EventSource": "aws:sns",
+            "EventSubscriptionArn": "arn:aws:sns:<region>:<accountid>:<sns-topic-name>:<random-string>",
+            "EventVersion": "1.0",
+            "Sns": {
+                "Message": "{\"receiver\": \"sns-topic\",\"status\": \"firing\",\"alerts\": [{\"status\": \"firing\",\"labels\": {\"alertname\": \"KubeNNRGT5\", \"clustername\": \"ssm-automation-trigger\", \"namespace\": \"prometheus\", \"prometheus\": \"prometheus/prometheus-kube-prometheus-prometheus\", \"region\": \"us-east-1\", \"severity\": \"warning\"},\"annotations\": {\"description\": \"More than 3 nodes are in Not Ready state\", \"summary\": \"3 or more nodes is not ready.\"},\"startsAt\": \"2024-05-23 17:54:27.701 +0000 UTC\",\"endsAt\": \"0001-01-01 00:00:00 +0000 UTC\",\"generatorURL\": \"<random-string>\",\"fingerprint\": \"redacted\"}],\"groupLabels\": {\"alertname\": \"KubeNNRGT5\", \"clustername\": \"ssm-automation-trigger\"},\"commonLabels\": {\"alertname\": \"KubeNNRGT5\", \"clustername\": \"ssm-automation-trigger\", \"namespace\": \"prometheus\", \"prometheus\": \"prometheus/prometheus-kube-prometheus-prometheus\", \"region\": \"us-east-1\", \"severity\": \"warning\"},\"commonAnnotations\": {\"description\": \"More than 3 nodes are in Not Ready state\", \"summary\": \"3 or more nodes in not ready.\"}}",
+                "MessageAttributes": {},
+                "MessageId": "<random-string>",
+                "Signature": "redacted",
+                "SignatureVersion": "1",
+                "SigningCertUrl": "redacted",
+                "Subject": "alertmanager",
+                "Timestamp": "2024-05-23T18:21:30.411Z",
+                "TopicArn": "arn:aws:sns:<region>:<accountid>:<sns-topic-name>",
+                "Type": "Notification",
+                "UnsubscribeUrl": "redacted"
+            }
+        }
+    ]
+}
