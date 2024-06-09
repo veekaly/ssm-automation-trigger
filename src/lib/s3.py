@@ -18,7 +18,6 @@ def list_bundles_latest(bucket, instance, time_delta):
         if response.get('Contents'):
             bundles = [{"key": content['Key'], "timestamp": content['LastModified']} for content in response['Contents'] if content['LastModified'] >= start_from]
     except botocore.exceptions.ClientError as error:
-        logger.error(error)
         raise error
     else:
         return bundles

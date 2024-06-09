@@ -27,7 +27,7 @@ eksctl create cluster --name ${CLUSTER_NAME} --region ${REGION}
 
 3. Create an IRSA role for the alertmanager pod to perform AWS actions
 ```
-cat <<EOF > alertmanager-sns-policy.json
+cat <<EOF > /tmp/alertmanager-sns-policy.json
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -43,9 +43,7 @@ cat <<EOF > alertmanager-sns-policy.json
 }
 EOF
 
-aws iam create-policy --policy-name AlertManagerSNSPolicy --policy-document file://alertmanager-sns-policy.json --region ${REGION}
-
-rm alertmanager-sns-policy.json
+aws iam create-policy --policy-name AlertManagerSNSPolicy --policy-document file:///tmp/alertmanager-sns-policy.json --region ${REGION}
 ```
 
 
@@ -68,7 +66,7 @@ eksctl create iamserviceaccount \
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
-envsubst < prometheus/kube-prometheus-stack-values.yaml.tmp > prometheus/kube-prometheus-stack-values.yaml
+sed "s/TOPIC_ARN/$SNS_TOPIC_ARN/g; s/REGION/$REGION/g" prometheus/kube-prometheus-stack-values.yaml.tmp > prometheus/kube-prometheus-stack-values.yaml
 helm upgrade --install prometheus prometheus-community/kube-prometheus-stack -n prometheus --values ./prometheus/kube-prometheus-stack-values.yaml
 ```
 

@@ -16,8 +16,7 @@ def start_execution(instance_id, bucket, role_arn):
             }
         )
     except botocore.exceptions.ClientError as error:
-        logger.error(error)
         raise error
     else:
         logger.info(f"EKS Log Collector automation executed for {instance_id}: {response['AutomationExecutionId']}")
-        return response['AutomationExecutionId']
+        return response.get('AutomationExecutionId')

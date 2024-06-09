@@ -110,7 +110,6 @@ class KubeAPI:
                 if continue_token is None or len(not_ready_nodes) >= node_limit:
                     break
         except client.exceptions.ApiException as error:
-            logger.error(f"Error getting node information: {error}")
             raise error
         else:
             return not_ready_nodes

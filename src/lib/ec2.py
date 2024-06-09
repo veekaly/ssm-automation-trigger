@@ -20,7 +20,6 @@ def get_instances(node_list):
             for instance in reservation['Instances']:
                 instances.append(instance['InstanceId'])
     except botocore.exceptions.ClientError as error:
-        logger.error(error)
         raise error
     else:
         return instances
