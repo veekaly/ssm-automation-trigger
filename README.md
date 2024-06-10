@@ -16,7 +16,7 @@ sam deploy --guided
 # Set the SNS Topic created in the above step as an environment variable
 export SNS_TOPIC_ARN=<topic-arn-from-sam-deploy-output>
 export LOG_COLLECTION_BUCKET=<LogCollectionS3Bucket-arn-from-sam-deploy-output>
-export LAMBDA_EXECUTION_IAM_ROLE_ARN=<iam-role-arn-of-SSMTriggerFunctionIAMRole-from-sam-deploy-output>
+export LAMBDA_EXECUTION_ROLE_ARN=<iam-role-arn-of-SSMTriggerFunctionIAMRole-from-sam-deploy-output>
 ```
 
 2. Create an EKS Cluster
@@ -109,7 +109,7 @@ helm upgrade --install prometheus prometheus-community/kube-prometheus-stack -n 
 kubectl create clusterrole nodeviewer --verb=get,list,watch --resource=nodes
 
 aws eks create-access-entry --cluster-name ${CLUSTER_NAME} \
-    --principal-arn ${LAMBDA_EXECUTION_IAM_ROLE_ARN} \
+    --principal-arn ${LAMBDA_EXECUTION_ROLE_ARN} \
     --username ssm-automation-trigger
     --kubernetes-groups nodeviewer
 ```
