@@ -3,7 +3,7 @@
 SSM Automation trigger receives alerts from EKS cluster(s) and executes the appropriate SSM automation to analyze/remediate issues.
 
 ## Architecture
-![architecture](./files/architecture.png)
+![architecture](./files/elc-automation.png)
 
 ## Setup Instructions
 
