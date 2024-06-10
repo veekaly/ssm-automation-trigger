@@ -58,7 +58,7 @@ alertmanager:
         - receiver: sns-topic
           matchers:
           - alertname="KubeNNR"
-        group_wait: 10s
+        group_wait: 30s
         group_interval: 5m
         repeat_interval: 24h
       - receiver: 'null'
@@ -71,7 +71,7 @@ alertmanager:
         - receiver: sns-topic
           matchers:
           - alertname="KubeNNRGT5"
-        group_wait: 5s
+        group_wait: 10s
         group_interval: 5m
         repeat_interval: 24h
     receivers:

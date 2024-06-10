@@ -51,6 +51,7 @@ def nnr_gt_execution(nodes):
             if len(bundles) > 0:
                 logger.info(f"Bundle for instance {instance} already uploaded in last {BUNDLE_SLEEP_DURATION} mins, skipping.")
             else:
+                logger.info(f"Bundle for instance {instance} not uploaded yet, executing automation.")
                 start_execution(instance, LOG_COLLECTION_BUCKET, SSM_AUTOMATION_EXECUTION_ROLE_ARN)
     except Exception as error:
         raise error
