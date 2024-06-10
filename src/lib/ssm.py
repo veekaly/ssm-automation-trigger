@@ -1,7 +1,4 @@
-import boto3, botocore, logging
-
-logger = logging.getLogger()
-logger.setLevel("INFO")
+import boto3, botocore
 
 ssm = boto3.client("ssm")
 
@@ -18,5 +15,4 @@ def start_execution(instance_id, bucket, role_arn):
     except botocore.exceptions.ClientError as error:
         raise error
     else:
-        logger.info(f"EKS Log Collector automation executed for {instance_id}: {response['AutomationExecutionId']}")
         return response.get('AutomationExecutionId')

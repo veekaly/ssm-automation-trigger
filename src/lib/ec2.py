@@ -1,7 +1,4 @@
-import boto3, botocore, logging
-
-logger = logging.getLogger()
-logger.setLevel("INFO")
+import boto3, botocore
 
 ec2 = boto3.client("ec2")
 

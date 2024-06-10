@@ -1,22 +1,15 @@
-import boto3, botocore, logging
+import boto3, botocore
 from datetime import datetime, timedelta
 import pytz
 
-logger = logging.getLogger()
-logger.setLevel("INFO")
+s3 = boto3.resource("s3")
 
-s3 = boto3.client("s3")
-
-def list_bundles_latest(bucket, instance, time_delta):
-    start_from = datetime.now(pytz.utc) - timedelta(minutes=time_delta)
+def list_bundles_latest(bucket, time_delta):
+    start_from = datetime.now(pytz.utc) - timedelta(seconds=time_delta)
     try:
-        bundles = list()
-        response = s3.list_objects_v2(
-            Bucket=bucket,
-            Prefix=f'eks_{instance}'
-        )
-        if response.get('Contents'):
-            bundles = [{"key": content['Key'], "timestamp": content['LastModified']} for content in response['Contents'] if content['LastModified'] >= start_from]
+        bucket = s3.Bucket(bucket)
+        bundles = bucket.objects.filter()
+        bundles = [obj.key for obj in sorted(bundles, key=lambda x: x.last_modified, reverse=True) if obj.last_modified >= start_from]
     except botocore.exceptions.ClientError as error:
         raise error
     else:

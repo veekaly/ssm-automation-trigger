@@ -1,11 +1,7 @@
 from kubernetes import client, config
 import boto3, botocore
-import base64
+import base64, re
 from botocore.signers import RequestSigner
-import logging, re
-
-logger = logging.getLogger()
-logger.setLevel("DEBUG")
 
 class KubeAPI:
     def __init__(self, cluster_name, region):
@@ -74,7 +70,7 @@ class KubeAPI:
                 "users": [{"name": "aws", "user" : {"token": token}}]
             }
         except botocore.exceptions.ClientError as error:
-            logger.error(error)
+            raise error
         else:
             return cluster_config
 
@@ -84,7 +80,6 @@ class KubeAPI:
             node_status = node_info.status.conditions[-1].type
             node_addresses = node_info.status.addresses
         except client.exceptions.ApiException as error:
-            logger.error(f"Error getting node information: {error}")
             raise error
         else:
             return {

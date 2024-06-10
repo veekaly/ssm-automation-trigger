@@ -7,7 +7,7 @@ Description: >
 
 Globals:
   Function:
-    Timeout: 10
+    Timeout: 15
     MemorySize: 128
 
 Resources:
@@ -36,6 +36,7 @@ Resources:
             Effect: Allow
             Action:
             - s3:ListBucket
+            - s3:ListObjects
             - s3:ListObjectsV2
             Resource: '*'
           - Sid: EC2Read
@@ -54,7 +55,7 @@ Resources:
           CLUSTER_REGION: us-east-1
           SSM_AUTOMATION_EXECUTION_ROLE_ARN: !GetAtt SSMExecutionRole.Arn
           LOG_COLLECTION_BUCKET: !Ref LogCollectionS3Bucket
-          BUNDLE_SLEEP_DURATION: 10
+          BUNDLE_SLEEP_SECONDS: 600
           NODE_RATE_LIMIT: 5
       Events:
         SNSSubscription:
@@ -69,7 +70,13 @@ Resources:
       FifoTopic: false
   LogCollectionS3Bucket:
     Type: AWS::S3::Bucket
-    Properties: {}
+    Properties:
+      LifecycleConfiguration:
+        Rules:
+        - Id: DeleteAfterWeek
+          Status: Enabled
+          ExpirationInDays: 7
+          Prefix: "eks_"
   SSMExecutionRole:
     Type: AWS::IAM::Role
     Properties:
